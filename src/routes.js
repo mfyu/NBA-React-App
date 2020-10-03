@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import {Route, Switch} from 'react-router-dom';
+import React from 'react';
+import { Switch} from 'react-router-dom';
 
 import Home from './components/Home/home'
 import Layout from './hoc/Layout/layout';
@@ -31,4 +31,4 @@ const Routes = (props)=> {
     }
 
 
-export default Routes;
+export default Routes; 
