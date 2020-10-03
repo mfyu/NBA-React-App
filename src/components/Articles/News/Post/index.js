@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {firebaseDB, firebaseLooper, firebaseTeams} from '../../../../firebase';
+import {firebase, firebaseDB, firebaseLooper, firebaseTeams} from '../../../../firebase';
 import style from '../../../Articles/articles.module.css';
 import Header from './header';
 
@@ -8,7 +8,9 @@ class NewsArticle extends Component{
 
     state={
         article:[],
-        team:[]
+        team:[],
+        imageURL:''
+
     }
 
     componentWillMount(){
@@ -20,11 +22,14 @@ class NewsArticle extends Component{
             firebaseTeams.orderByChild('teamId').equalTo(article.team).once('value')
             .then((snapshot)=>{
                 const team = firebaseLooper(snapshot);
+
                 this.setState({
                     article,
                     team
                 })
+                this.getImageURL(article.image)
             })
+            
         })
 
         // axios.get(`${URL}/articles?id=${this.props.match.params.id}`)
@@ -40,6 +45,15 @@ class NewsArticle extends Component{
         //     })
         // })
     }
+
+    getImageURL = (filename) =>{
+        firebase.storage().ref('images').child(filename).getDownloadURL().then((url)=>{
+            this.setState({
+                imageURL:url
+            })
+        })
+    }
+
     render(){
         const article = this.state.article;
         const team = this.state.team;
@@ -53,11 +67,11 @@ class NewsArticle extends Component{
                 <div className={style.articleBody}>
                     <h1>
                         {article.title}
-                        <div className={style.articleImage} style={{background: `url('/images/articles/${article.image}')`}}>
+                        <div className={style.articleImage} style={{background: `url('${this.state.imageURL}')`}}>
 
                         </div>
-                        <div className={style.articleText}>
-                            {article.body}
+                        <div className={style.articleText} dangerouslySetInnerHTML={{__html:article.body}}>
+                            
                         </div>
                     </h1>
                 </div>

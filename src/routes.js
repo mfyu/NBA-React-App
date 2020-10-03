@@ -7,22 +7,28 @@ import NewsArticle from './components/Articles/News/Post/index';
 import VideoArticle from './components/Articles/Videos/Video/index';
 import News from './components/Articles/News/news';
 import Videos from './components/Home/videos';
+import SignIn from './components/Signin/signin';
+import Dashboard from './components/Dashboard/dashboard';
+import PrivateRoute from './components/AuthRoutes/privateRoutes';
+import PublicRoute from './components/AuthRoutes/publicRoutes';
 
-class Routes extends Component {
-    render() {
+const Routes = (props)=> {
+    
         return (
-            <Layout>
+            <Layout user={props.user}>
                 <Switch>
-                    <Route path="/" exact component={Home}/>
-                    <Route path="/articles/:id" exact component={NewsArticle}/>
-                    <Route path="/videos/:id" exact component={VideoArticle}/>
-                    <Route path="/news" component={News}/>
-                    <Route path="/videos" component={Videos}/>
+                <PublicRoute {...props} restricted={false} path="/" exact component={Home}/>
+                    <PublicRoute {...props} restricted={false} path="/articles/:id" exact component={NewsArticle}/>
+                    <PublicRoute {...props} restricted={false} path="/videos/:id" exact component={VideoArticle}/>
+                    <PublicRoute {...props} restricted={false} path="/news" component={News}/>
+                    <PublicRoute {...props} restricted={false} path="/videos" component={Videos}/>
+                    <PublicRoute {...props} restricted={true} path="/sign-in" exact component = {SignIn}/>
+                    <PrivateRoute {...props} path="/dashboard" exact component = {Dashboard}/>
                 </Switch>
             </Layout>
             
         );
     }
-}
+
 
 export default Routes;

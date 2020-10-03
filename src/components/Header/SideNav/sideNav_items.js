@@ -1,53 +1,111 @@
 import React from 'react';
 import style from './sideNav.module.css'
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
+import {firebase} from '../../../firebase';
 
 const SideNavItems = (props) => {
-
+    console.log(props);
     const items = [
         {
             type: style.option,
             icon: 'home',
             text: "Home",
-            link: '/'
+            link: '/',
+            login: ''
         },
         {
             type: style.option,
             icon: 'file-text-o',
             text: "News",
-            link: '/news'
+            link: '/news',
+            login: ''
         },
         {
             type: style.option,
             icon: 'play',
             text: "Videos",
-            link: '/videos'
+            link: '/videos',
+            login: ''
+        },
+        {
+            type: style.option,
+            icon: 'sign-in',
+            text: "Dashboard",
+            link: '/dashboard',
+            login: false
         },
         {
             type: style.option,
             icon: 'sign-in',
             text: "Sign In",
-            link: '/sign-in'
+            link: '/sign-in',
+            login: true
         },
         {
             type: style.option,
             icon: 'sign-out',
             text: "Sign Out",
-            link: '/sign-out'
+            link: '/sign-out',
+            login: false
         }
     ]
 
+    const element = (item,i) =>(
+        <div key={i} className={item.type} >
+            <Link to={item.link} onClick={props.onHideNav}>
+                <FontAwesome name={item.icon}  />
+                {item.text}
+            </Link>
+        </div>
+    )
+
+    // const hideNav=()=>{
+    //     props.onHideNav
+    //     console.log(props);
+    // }
+
+    const signOut=()=>{
+        
+        firebase.auth().signOut().then(()=>{
+         props.history.push("/")
+            
+         })
+         
+    }
+
+    const restricted = (item,i)=>{
+        let template = null;
+        if(props.user == null && item.login){
+            template = element(item,i)
+        }
+
+        if(props.user !== null && !item.login){
+            if(item.link==='/sign-out'){
+                template=(
+                    <div key={i} className={item.type} onClick={()=>{
+                        signOut()  
+                        
+                    }
+                    }>
+                        <div onClick={props.onHideNav}>
+                            <FontAwesome name={item.icon}  />
+                            {item.text}
+                        </div>
+                        
+                    </div>
+                )
+            }else{
+                template = element(item,i)
+            }
+        }
+
+        return template;
+    }
+
     const showItems = () => {
         return items.map((item, i) => {
-            return (
-                <div key={i} className={item.type} >
-                    <Link to={item.link} onClick={props.onHideNav}>
-                        <FontAwesome name={item.icon}  />
-                        {item.text}
-                    </Link>
-                </div>
-            )
+            return item.login !== '' ? restricted(item,i) : element(item,i)
         })
     }
 
@@ -60,4 +118,4 @@ const SideNavItems = (props) => {
     );
 };
 
-export default SideNavItems;
+export default withRouter(SideNavItems);

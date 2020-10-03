@@ -29,6 +29,17 @@ const firebaseConfig = {
     return data;
   }
 
+  firebaseDB.ref('teams/Wizards').set({
+      city: "Washington",
+      count: 0,
+      description:"Washington Wizards",
+      id: 29,
+      logo: "wizards.png",
+      name: "Wizards",
+      poll: "false",
+      teamId: 29
+  })
+
   
 
   export {
